@@ -18,6 +18,8 @@ GITCRYPT_ENABLE="${GITCRYPT_ENABLE:-"false"}"
 GITCRYPT_PRIVATE_KEY="${GITCRYPT_PRIVATE_KEY:-"/secrets/gpg-private.key"}"
 GITCRYPT_SYMMETRIC_KEY="${GITCRYPT_SYMMETRIC_KEY:-"/secrets/symmetric.key"}"
 
+./pv-backup.sh
+
 if [[ ! -f /backup/.ssh/id_rsa ]]; then
     git config --global credential.helper '!aws codecommit credential-helper $@'
     git config --global credential.UseHttpPath true

@@ -38,5 +38,9 @@ RUN echo "${KUBECTL_SHA256}  kubectl" | sha256sum -c - || exit 10
 ENV PATH="/:${PATH}"
 
 COPY entrypoint.sh /
+COPY pv-backup.sh /
+
+RUN chmod 755 /pv-backup.sh
+
 USER backup
 ENTRYPOINT ["/entrypoint.sh"]

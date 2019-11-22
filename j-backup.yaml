@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    run: backup
+  name: backup
+spec:
+      template:
+        metadata:
+          labels:
+            run: backup
+        spec:
+          containers:
+          - env:
+            - name: GIT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  key: github-token
+                  name: git-credentials
+            - name: GIT_REPO
+              value: https://ZiedAndolsi:$(GIT_TOKEN)@github.com/AndolsiZied/site-web.git
+            - name: RESOURCETYPES
+              value: deployment configmap svc pvc secret job cj
+            - name: NAMESPACES
+              value: nextek-site-web
+            - name: GITCRYPT_ENABLE
+              value: "true"
+            image: zandolsi/kube-backup:1.0.5
+            imagePullPolicy: IfNotPresent
+            name: backup
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            volumeMounts:
+            - mountPath: /backup/
+              name: cache
+            - mountPath: /secrets
+              name: gpg-secret
+            - mountPath: $HOME/.aws/
+              name: aws-keys
+          dnsPolicy: ClusterFirst
+          restartPolicy: OnFailure
+          schedulerName: default-scheduler
+          securityContext: {}
+          terminationGracePeriodSeconds: 30
+          volumes:
+          - emptyDir: {}
+            name: cache
+          - name: gpg-secret
+            secret:
+              defaultMode: 420
+              secretName: kube-backup-gpg
+          - name: aws-keys
+            secret:
+              defaultMode: 420
+              secretName: aws-keys

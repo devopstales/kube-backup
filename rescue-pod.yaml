@@ -1,0 +1,17 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: rescue-pod
+spec:
+  volumes:
+    - name: rescue-storage
+      persistentVolumeClaim:
+       claimName: wordpress-volumeclaim
+  containers:
+    - name: rescue-container
+      image: alpine
+      command: [ "/bin/sh", "-c", "--" ]
+      args: [ "while true; do sleep 30; done;" ]
+      volumeMounts:
+        - mountPath: "/storage"
+          name: rescue-storage
